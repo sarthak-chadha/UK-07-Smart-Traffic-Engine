@@ -1,0 +1,13 @@
+{
+  "name": "TerrainNav – AI Route Intelligence",
+  "short_name": "TerrainNav",
+  "description": "AI-powered elevation-aware route planning for Dehradun & Mussoorie",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d0f1a",
+  "theme_color": "#0d0f1a",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

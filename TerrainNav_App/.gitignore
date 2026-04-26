@@ -1,0 +1,19 @@
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS Data
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependencies
+node_modules/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.development
+.env.production

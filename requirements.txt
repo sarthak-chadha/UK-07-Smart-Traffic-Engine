@@ -1,0 +1,28 @@
+# --- Core ML / GNN ---
+torch>=2.3.0
+torch-geometric>=2.5.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+scipy>=1.13.0
+
+# --- Graph & Geospatial ---
+osmnx>=1.9.0
+networkx>=3.3
+geopandas>=0.14.0
+shapely>=2.0.0
+pyproj>=3.6.0
+
+# --- FastAPI Backend ---
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.7.0
+python-dotenv>=1.0.0
+requests>=2.32.0
+
+# --- Data Processing ---
+pandas>=2.2.0
+tqdm>=4.66.0
+
+# --- Training & Visualization (optional, not needed for the API server) ---
+matplotlib>=3.8.0
+seaborn>=0.13.0

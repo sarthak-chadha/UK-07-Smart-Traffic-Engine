@@ -1,0 +1,6 @@
+{
+  "appId": "com.terrainnav.app",
+  "appName": "TerrainNav",
+  "webDir": "../TerrainNav_App",
+  "bundledWebRuntime": false
+}

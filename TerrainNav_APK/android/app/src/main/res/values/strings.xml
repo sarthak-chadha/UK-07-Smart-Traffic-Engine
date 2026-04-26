@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TerrainNav</string>
+    <string name="title_activity_main">TerrainNav</string>
+    <string name="package_name">com.terrainnav.app</string>
+    <string name="custom_url_scheme">com.terrainnav.app</string>
+</resources>

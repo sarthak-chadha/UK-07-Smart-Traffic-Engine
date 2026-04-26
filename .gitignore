@@ -1,0 +1,125 @@
+# =============================================================
+# .gitignore — UK-07 Smart Traffic Engine / DeepLearn Project
+# =============================================================
+
+# --- Backend (lives on HuggingFace Spaces, not GitHub) ---
+# See: https://huggingface.co/spaces/Sarthak2606/UK-07_Smart_Traffic_Engine
+Project/app.py
+
+# --- Secrets & Environment ---
+.env
+.env.local
+.env.development
+.env.production
+config_local.yaml
+local_settings.py
+
+# --- Python Build / Cache ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+*.spec
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# --- Logs ---
+*.log
+
+# --- Virtual Environment (repo root IS the venv) ---
+Scripts/
+Lib/
+Include/
+share/
+env/
+venv/
+.venv/
+pyvenv.cfg
+
+# --- Large Data & Model Artifacts (stored on HuggingFace / LFS) ---
+Dataset/
+Models/
+cache/
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.onnx
+*.safetensors
+*.graphml
+*.npy
+*.npz
+*.csv
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+*.ipynb
+
+# --- IDE ---
+.vscode/
+.idea/
+*.suo
+*.user
+*.swp
+*.swo
+*~
+.history/
+.pdm-python
+.python-version
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# --- ML Experiment Tracking ---
+runs/
+wandb/
+mlruns/
+lightning_logs/
+checkpoints/
+outputs/
+figures/
+plots/
+tmp/
+temp/
+
+# --- Type Checkers / Linters ---
+.mypy_cache/
+.pyright/
+.ruff_cache/
+.pyre/
+
+# --- Profiling ---
+*.prof
+
+# --- DB ---
+*.db
+*.sqlite3
+
+# --- Archives ---
+*.zip
+*.tar.gz
+
+# --- Node / Frontend (TerrainNav_App & TerrainNav_APK) ---
+node_modules/
+package-lock.json
+
+# --- Capacitor / Android Build (TerrainNav_APK) ---
+TerrainNav_APK/android/.gradle/
+TerrainNav_APK/android/build/
+TerrainNav_APK/android/app/build/
+TerrainNav_APK/android/local.properties
+TerrainNav_APK/android/.idea/
+*.apk
+*.aab

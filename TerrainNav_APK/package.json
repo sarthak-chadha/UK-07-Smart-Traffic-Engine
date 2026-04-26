@@ -1,0 +1,20 @@
+{
+  "name": "terrain-nav-apk",
+  "version": "1.0.0",
+  "description": "Android APK wrapper for TerrainNav",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "capacitor",
+    "android"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^8.3.1",
+    "@capacitor/cli": "^8.3.1",
+    "@capacitor/core": "^8.3.1"
+  }
+}

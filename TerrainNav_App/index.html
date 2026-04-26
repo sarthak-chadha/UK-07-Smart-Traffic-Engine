@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TerrainNav – AI Route Intelligence | Dehradun-Mussoorie</title>
+  <meta name="description" content="AI-powered terrain-aware route planning for Dehradun and Mussoorie. Uses elevation, live traffic, and deep learning for the optimal route.">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0d0f1a">
+  <link rel="apple-touch-icon" href="icon.svg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- TomTom Maps SDK -->
+  <link rel="stylesheet" type="text/css" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.23.0/maps/maps.css">
+  <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.23.0/maps/maps-web.min.js"></script>
+  <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.23.0/services/services-web.min.js"></script>
+
+  <!-- Phosphor Icons -->
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ═══════════════ SPLASH ═══════════════ -->
+  <div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+      <div class="splash-logo">
+        <div class="splash-icon-ring">
+          <svg class="terrain-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 60 L25 35 L38 48 L52 22 L70 60Z" stroke="url(#grad1)" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+            <circle cx="52" cy="22" r="5" fill="url(#grad1)"/>
+            <defs>
+              <linearGradient id="grad1" x1="10" y1="60" x2="70" y2="22" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#6EE7F7"/>
+                <stop offset="100%" stop-color="#a78bfa"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h1 class="splash-title">TerrainNav</h1>
+        <p class="splash-sub">AI Route Intelligence</p>
+      </div>
+      <div class="splash-loader">
+        <div class="loader-bar"><div class="loader-fill" id="loader-fill"></div></div>
+        <p class="loader-text" id="loader-text">Initialising engine…</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MAIN APP ═══════════════ -->
+  <div id="app" class="app hidden">
+
+    <!-- Map -->
+    <div id="tt-map"></div>
+
+    <!-- ── TOP BAR ── -->
+    <header class="top-bar glass">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 32 32" fill="none">
+          <path d="M4 24 L10 14 L16 19 L22 8 L28 24Z" stroke="url(#bg1)" stroke-width="2" fill="none" stroke-linejoin="round"/>
+          <circle cx="22" cy="8" r="2.5" fill="url(#bg1)"/>
+          <defs>
+            <linearGradient id="bg1" x1="4" y1="24" x2="28" y2="8" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#6EE7F7"/>
+              <stop offset="100%" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="brand-name">TerrainNav</span>
+        <span class="brand-badge">AI</span>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn glass" id="map-style-btn" title="Toggle map style" aria-label="Toggle map style">
+          <i class="ph ph-stack"></i>
+        </button>
+        <button class="icon-btn glass" id="traffic-toggle-btn" title="Toggle traffic layer" aria-label="Toggle traffic">
+          <i class="ph ph-traffic-sign"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── MAP CONTROLS ── -->
+    <div class="map-controls" id="map-controls">
+      <button class="icon-btn glass" id="zoom-in-btn" aria-label="Zoom in"><i class="ph ph-plus"></i></button>
+      <button class="icon-btn glass" id="zoom-out-btn" aria-label="Zoom out"><i class="ph ph-minus"></i></button>
+      <button class="icon-btn glass" id="my-location-btn" aria-label="My location"><i class="ph ph-crosshair"></i></button>
+      <button class="icon-btn primary-btn" id="navigate-btn" aria-label="Navigate" title="Start Navigation">
+        <i class="ph ph-navigation-arrow"></i>
+      </button>
+    </div>
+
+    <!-- ── BOTTOM PANEL ── -->
+    <div class="bottom-panel" id="bottom-panel">
+      <div class="panel-handle" id="panel-handle"></div>
+
+      <div class="panel-scroll">
+
+        <!-- Route Form -->
+        <section class="route-form" id="route-form-section">
+          <h2 class="section-label">Plan Your Route</h2>
+
+          <div class="input-group">
+            <label class="input-label" for="start-input">
+              <span class="input-dot start-dot"></span> Start
+            </label>
+            <div class="input-wrapper">
+              <input type="text" id="start-input" class="loc-input" 
+                     placeholder="e.g. Clock Tower, Dehradun" autocomplete="off" spellcheck="false">
+              <button class="clear-btn" id="clear-start" aria-label="Clear start">
+                <i class="ph ph-x-circle"></i>
+              </button>
+            </div>
+            <div class="suggestions-box" id="start-suggestions"></div>
+          </div>
+
+          <div class="swap-row">
+            <div class="input-connector"></div>
+            <button class="swap-btn" id="swap-btn" title="Swap locations" aria-label="Swap start and end">
+              <i class="ph ph-arrows-down-up"></i>
+            </button>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="end-input">
+              <span class="input-dot end-dot"></span> Destination
+            </label>
+            <div class="input-wrapper">
+              <input type="text" id="end-input" class="loc-input" 
+                     placeholder="e.g. Mall Road, Mussoorie" autocomplete="off" spellcheck="false">
+              <button class="clear-btn" id="clear-end" aria-label="Clear end">
+                <i class="ph ph-x-circle"></i>
+              </button>
+            </div>
+            <div class="suggestions-box" id="end-suggestions"></div>
+          </div>
+
+          <div class="coord-toggle-row">
+            <button class="coord-toggle-btn" id="coord-toggle">
+              <i class="ph ph-map-trifold"></i>
+              Use Coordinates Instead
+            </button>
+          </div>
+
+          <!-- Coordinate Mode (hidden by default) -->
+          <div class="coord-section hidden" id="coord-section">
+            <div class="coord-row">
+              <div class="coord-field">
+                <label for="start-lat">Start Lat</label>
+                <input type="number" id="start-lat" placeholder="30.3226" step="0.0001">
+              </div>
+              <div class="coord-field">
+                <label for="start-lon">Start Lon</label>
+                <input type="number" id="start-lon" placeholder="78.0411" step="0.0001">
+              </div>
+            </div>
+            <div class="coord-row">
+              <div class="coord-field">
+                <label for="end-lat">End Lat</label>
+                <input type="number" id="end-lat" placeholder="30.4598" step="0.0001">
+              </div>
+              <div class="coord-field">
+                <label for="end-lon">End Lon</label>
+                <input type="number" id="end-lon" placeholder="78.0644" step="0.0001">
+              </div>
+            </div>
+          </div>
+
+          <button class="predict-btn" id="predict-btn">
+            <i class="ph ph-brain"></i>
+            <span>Predict Optimal Route</span>
+            <div class="btn-shine"></div>
+          </button>
+        </section>
+
+        <!-- Loading State -->
+        <div class="predict-loader hidden" id="predict-loader">
+          <div class="loader-orbit">
+            <div class="orbit-ring"></div>
+            <div class="orbit-dot"></div>
+          </div>
+          <p class="predict-loader-text">Analysing terrain & traffic…</p>
+          <p class="predict-loader-sub">Running GATv2 elevation-aware model</p>
+        </div>
+
+        <!-- Route Result -->
+        <section class="route-result hidden" id="route-result">
+          <div class="result-header">
+            <div class="result-badge">
+              <i class="ph ph-check-circle"></i> Optimal Route Found
+            </div>
+            <button class="result-close-btn" id="result-close">
+              <i class="ph ph-x"></i>
+            </button>
+          </div>
+
+          <div class="result-stats">
+            <div class="stat-card eta-card">
+              <div class="stat-icon"><i class="ph ph-clock"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="result-eta">--</span>
+                <span class="stat-label">ETA (mins)</span>
+              </div>
+            </div>
+            <div class="stat-card dist-card">
+              <div class="stat-icon"><i class="ph ph-path"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="result-nodes">--</span>
+                <span class="stat-label">Route Nodes</span>
+              </div>
+            </div>
+            <div class="stat-card elev-card">
+              <div class="stat-icon"><i class="ph ph-mountains"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="result-model">GAT</span>
+                <span class="stat-label">AI Model</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="elevation-chart-wrap">
+            <p class="chart-label">Elevation Profile <span class="chart-sub">(approx.)</span></p>
+            <canvas id="elevation-chart" width="360" height="90"></canvas>
+          </div>
+
+          <div class="time-stamp">
+            <i class="ph ph-calendar-check"></i>
+            <span id="result-time">--</span>
+          </div>
+
+          <button class="start-nav-btn" id="start-nav-btn">
+            <i class="ph ph-navigation-arrow"></i>
+            Start Navigation
+          </button>
+        </section>
+
+        <!-- Error State -->
+        <div class="error-state hidden" id="error-state">
+          <i class="ph ph-warning-circle error-icon"></i>
+          <p class="error-msg" id="error-msg">Something went wrong. Please try again.</p>
+          <button class="retry-btn" id="retry-btn">Retry</button>
+        </div>
+
+        <!-- Categories -->
+        <section class="quick-cats" id="quick-cats">
+          <h2 class="section-label">Quick Places</h2>
+          <div class="cats-row">
+            <button class="cat-item" data-dest="Clock Tower" data-lat="30.324445" data-lon="78.042014" aria-label="Clock Tower">
+              <div class="cat-icon road-cat"><i class="ph ph-clock"></i></div>
+              <span>Clock T.</span>
+            </button>
+            <button class="cat-item" data-dest="DIT University" data-lat="30.401019" data-lon="78.078607" aria-label="DIT University">
+              <div class="cat-icon bus-cat"><i class="ph ph-graduation-cap"></i></div>
+              <span>DIT Uni.</span>
+            </button>
+            <button class="cat-item" data-dest="ISBT Dehradun" aria-label="ISBT">
+              <div class="cat-icon bus-cat"><i class="ph ph-bus"></i></div>
+              <span>ISBT</span>
+            </button>
+            <button class="cat-item" data-dest="Rajpur Road Dehradun" aria-label="Rajpur Road">
+              <div class="cat-icon road-cat"><i class="ph ph-road-horizon"></i></div>
+              <span>Rajpur Rd</span>
+            </button>
+            <button class="cat-item" data-dest="Jolly Grant Airport Dehradun" aria-label="Airport">
+              <div class="cat-icon air-cat"><i class="ph ph-airplane"></i></div>
+              <span>Airport</span>
+            </button>
+            <button class="cat-item" data-dest="Mussoorie Mall Road" aria-label="Mussoorie">
+              <div class="cat-icon hill-cat"><i class="ph ph-mountains"></i></div>
+              <span>Mussoorie</span>
+            </button>
+            <button class="cat-item" data-dest="Sahastradhara Dehradun" aria-label="Sahastradhara">
+              <div class="cat-icon water-cat"><i class="ph ph-drop"></i></div>
+              <span>Sahastrad.</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Live Info -->
+        <section class="live-info" id="live-info-section">
+          <h2 class="section-label">Live Conditions</h2>
+          <div class="info-cards">
+            <div class="info-card traffic-info">
+              <div class="info-card-icon"><i class="ph ph-traffic-sign"></i></div>
+              <div class="info-card-text">
+                <h3>Traffic</h3>
+                <p id="traffic-status">Fetching…</p>
+              </div>
+              <div class="info-card-badge" id="traffic-badge">--</div>
+            </div>
+            <div class="info-card terrain-info">
+              <div class="info-card-icon"><i class="ph ph-mountains"></i></div>
+              <div class="info-card-text">
+                <h3>Terrain</h3>
+                <p>Dehradun–Mussoorie corridor</p>
+              </div>
+              <div class="info-card-badge terrain-badge">950m↑</div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /panel-scroll -->
+    </div><!-- /bottom-panel -->
+
+  </div><!-- /app -->
+
+  <!-- Scripts -->
+  <script src="config.js"></script>
+  <script src="api.js"></script>
+  <script src="map.js"></script>
+  <script src="app.js"></script>
+
+  <!-- SW -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
